@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 
-import "./globals.css";
-import { SessionProvider } from "./components/SessionProvider";
+import { SessionProvider } from "next-auth/react";
+import { auth } from "@/auth";
 import UserButton from "./components/UserButton";
+
+import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,13 +23,22 @@ export const metadata: Metadata = {
   description: "ChatGPT in your app",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
+  if (session?.user) {
+    session.user = {
+      name: session.user.name,
+      email: session.user.email,
+      image: session.user.image,
+    };
+  }
   return (
-    <SessionProvider>
+    <SessionProvider basePath="/api/auth" session={session}>
       <html lang="en" className="dark">
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased 

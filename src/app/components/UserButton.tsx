@@ -1,4 +1,4 @@
-"use client";
+import { auth, signIn, signOut } from "@/auth";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,31 +8,30 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { useSession, signIn, signOut } from "next-auth/react";
-
 function getFirstTwoCapitalLetters(str?: string | null) {
   const match = (str || "").match(/[A-Z]/g);
   return match ? match.slice(0, 2).join("") : "GT";
 }
 
-export default function UserButton() {
-  const { data: session, status } = useSession();
+export default async function UserButton() {
+  const session = await auth();
 
-  if (status === "authenticated") {
+  if (session?.user) {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar>
-            <AvatarImage src={session?.user?.image || ""} />
+            <AvatarImage src={session.user.image || ""} />
             <AvatarFallback>
-              {getFirstTwoCapitalLetters(session?.user?.name)}
+              {getFirstTwoCapitalLetters(session.user.name)}
             </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem
-            onClick={() => {
-              signOut();
+            onClick={async () => {
+              "use server";
+              await signOut();
             }}
           >
             Sign Out
@@ -42,9 +41,14 @@ export default function UserButton() {
     );
   }
 
-  if (status === "unauthenticated") {
-    return <Button onClick={() => signIn()}>Sign in</Button>;
-  }
-
-  return null;
+  return (
+    <Button
+      onClick={async () => {
+        "use server";
+        await signIn();
+      }}
+    >
+      Sign in
+    </Button>
+  );
 }
