@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 
 import "./globals.css";
+import { SessionProvider } from "./components/SessionProvider";
+import UserButton from "./components/UserButton";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,36 +27,45 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased max-w-8/10 my-8 mx-auto`}
-      >
-        <header className="py-6">
-          <nav>
-            <ul className="flex gap-2">
-              <li>
-                <Link
-                  href="/"
-                  className="hover:underline hover:underline-offset-4 hover:text-slate-500"
-                >
-                  GPT Chat
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/about"
-                  className="hover:underline hover:underline-offset-4 hover:text-slate-500"
-                >
-                  About
-                </Link>
-              </li>
-            </ul>
-          </nav>
-        </header>
-        <div className="flex flex-col md:flex-row">
-          <div className="flex-grow">{children}</div>
-        </div>
-      </body>
-    </html>
+    <SessionProvider>
+      <html lang="en" className="dark">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased 
+          max-w-8/10 
+          my-8 
+          mx-auto
+          `}
+        >
+          <header className="py-6">
+            <nav className="flex justify-between">
+              <ul className="flex gap-2">
+                <li>
+                  <Link
+                    href="/"
+                    className="hover:underline hover:underline-offset-4 hover:text-slate-500 text-xl"
+                  >
+                    GPT Chat
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/about"
+                    className="hover:underline hover:underline-offset-4 hover:text-slate-500 text-xl"
+                  >
+                    About
+                  </Link>
+                </li>
+              </ul>
+              <div>
+                <UserButton />
+              </div>
+            </nav>
+          </header>
+          <div className="flex flex-col md:flex-row">
+            <div className="flex-grow">{children}</div>
+          </div>
+        </body>
+      </html>
+    </SessionProvider>
   );
 }
