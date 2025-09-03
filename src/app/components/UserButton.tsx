@@ -45,7 +45,9 @@ export default async function UserButton() {
     <Button
       onClick={async () => {
         "use server";
-        await signIn();
+        await signIn("github", {
+          redirectTo: "/",
+        });
       }}
     >
       Sign in

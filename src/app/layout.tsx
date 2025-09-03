@@ -48,8 +48,8 @@ export default async function RootLayout({
           `}
         >
           <header className="py-6">
-            <nav className="flex justify-between">
-              <ul className="flex gap-2">
+            <nav className="flex justify-between pb-2 border-b-indigo-500 border-b-1">
+              <ul className="flex gap-4">
                 <li>
                   <Link
                     href="/"
