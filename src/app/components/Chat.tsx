@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -10,15 +10,17 @@ import { getCompletion } from "../server-actions/getCompletion";
 export function Chat() {
   const [messages, setMessages] = useState<Completion[]>([]);
   const [message, setMessage] = useState("");
+  const chatId = useRef<string | null>(null);
 
   const onClick = async () => {
-    const completions = await getCompletion([
+    const completions = await getCompletion(chatId.current, [
       ...messages,
       {
         role: "user",
         content: message,
       },
     ]);
+    chatId.current = completions.id;
     setMessage("");
     setMessages(completions.messages);
   };
@@ -41,6 +43,7 @@ export function Chat() {
           </div>
         </div>
       ))}
+      <pre>{JSON.stringify(messages)}</pre>
       <div className="flex border-t-2 border-t-gray-500 pt-3 mt-3">
         <Input
           className="flex-grow text-xl"
