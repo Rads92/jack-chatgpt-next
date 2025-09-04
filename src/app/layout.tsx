@@ -60,6 +60,14 @@ export default async function RootLayout({
                 </li>
                 <li>
                   <Link
+                    href="/chats"
+                    className="hover:underline hover:underline-offset-4 hover:text-slate-500 text-xl"
+                  >
+                    Chats
+                  </Link>
+                </li>
+                <li>
+                  <Link
                     href="/about"
                     className="hover:underline hover:underline-offset-4 hover:text-slate-500 text-xl"
                   >

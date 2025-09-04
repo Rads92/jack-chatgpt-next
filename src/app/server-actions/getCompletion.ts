@@ -3,8 +3,9 @@
 import { Completion } from "@/lib/types";
 import OpenAi from "openai";
 
-import { createChat } from "@/prisma/chat";
+import { createChat, updateChat } from "@/prisma/chat";
 import { auth } from "@/auth";
+import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
 
 const openai = new OpenAi({
   apiKey: process.env.OPENAI_API_KEY,
@@ -16,7 +17,7 @@ export async function getCompletion(
 ) {
   const response = await openai.chat.completions.create({
     model: "gpt-4.1-nano",
-    messages: messageHistory,
+    messages: messageHistory as ChatCompletionMessageParam[],
   });
 
   const messages = [
@@ -27,16 +28,16 @@ export async function getCompletion(
   const session = await auth();
 
   let chatId = id;
+  let chat;
   if (!chatId) {
-    chatId = (
-      await createChat(
-        session?.user?.email || "",
-        messageHistory[0].content,
-        messages
-      )
-    ).id;
+    chat = await createChat(
+      session?.user?.email || "",
+      messageHistory[0].content,
+      messages
+    );
+    chatId = chat.id;
   } else {
-    // await updateChat(chatId, messages)
+    await updateChat(chatId, messages);
   }
 
   return {

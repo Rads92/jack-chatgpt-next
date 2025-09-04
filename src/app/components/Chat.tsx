@@ -6,13 +6,22 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Completion } from "@/lib/types";
 import { getCompletion } from "../server-actions/getCompletion";
+import { Message } from "@/prisma/generated/prisma";
+import { redirect } from "next/navigation";
 
-export function Chat() {
-  const [messages, setMessages] = useState<Completion[]>([]);
+export function Chat({
+  id,
+  initialMessages = [],
+}: {
+  id?: string;
+  initialMessages?: Completion[];
+}) {
+  const [messages, setMessages] = useState<Completion[]>(initialMessages);
   const [message, setMessage] = useState("");
-  const chatId = useRef<string | null>(null);
+  const chatId = useRef<string | null>(id || null);
 
   const onClick = async () => {
+    console.log("🚀 ~ onClick ~ messages:", messages);
     const completions = await getCompletion(chatId.current, [
       ...messages,
       {
@@ -20,6 +29,10 @@ export function Chat() {
         content: message,
       },
     ]);
+
+    if (!chatId.current) {
+      redirect(`/chats/${completions.id}`);
+    }
     chatId.current = completions.id;
     setMessage("");
     setMessages(completions.messages);
@@ -27,7 +40,7 @@ export function Chat() {
 
   return (
     <div className="flex flex-col">
-      {messages.map((message, i) => (
+      {messages?.map((message, i) => (
         <div
           key={i}
           className={`mb-5 flex flex-col ${
@@ -56,6 +69,7 @@ export function Chat() {
           }}
         />
       </div>
+      <div className="py-6" />
       <Button onClick={onClick} className="ml-3 text-xl">
         Send
       </Button>

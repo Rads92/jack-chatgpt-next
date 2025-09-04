@@ -1,4 +1,4 @@
 export type Completion = {
-  role: "user" | "assistant";
+  role: string;
   content: string;
 };

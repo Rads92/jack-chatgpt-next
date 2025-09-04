@@ -1,3 +1,4 @@
+import { Completion } from "@/lib/types";
 import { prismaClient } from "@/prisma/client";
 import { Message } from "@/prisma/generated/prisma";
 
@@ -48,6 +49,18 @@ export async function createChat(
   return chat;
 }
 
-export async function updateChat(id: string, messages: Message[]) {
-  console.log("elo", id, messages);
+export async function updateChat(id: string, messages: Completion[]) {
+  await prismaClient.message.deleteMany({
+    where: {
+      chat_id: id,
+    },
+  });
+
+  await prismaClient.message.createMany({
+    data: messages.map((msg) => ({
+      chat_id: id,
+      role: msg.role,
+      content: msg.content,
+    })),
+  });
 }
