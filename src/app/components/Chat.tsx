@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Completion } from "@/lib/types";
 import { getCompletion } from "../server-actions/getCompletion";
-import { Message } from "@/prisma/generated/prisma";
 import { redirect } from "next/navigation";
 
 export function Chat({
@@ -21,7 +20,6 @@ export function Chat({
   const chatId = useRef<string | null>(id || null);
 
   const onClick = async () => {
-    console.log("🚀 ~ onClick ~ messages:", messages);
     const completions = await getCompletion(chatId.current, [
       ...messages,
       {

@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Link from "next/link";
 
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
 import UserButton from "./components/UserButton";
 
 import "./globals.css";
+import { NavLink } from "./components/NavLink";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -51,28 +51,13 @@ export default async function RootLayout({
             <nav className="flex justify-between pb-2 border-b-indigo-500 border-b-1">
               <ul className="flex gap-4">
                 <li>
-                  <Link
-                    href="/"
-                    className="hover:underline hover:underline-offset-4 hover:text-slate-500 text-xl"
-                  >
-                    GPT Chat
-                  </Link>
+                  <NavLink href="/">GPT Chat</NavLink>
                 </li>
                 <li>
-                  <Link
-                    href="/chats"
-                    className="hover:underline hover:underline-offset-4 hover:text-slate-500 text-xl"
-                  >
-                    Chats
-                  </Link>
+                  <NavLink href="/chats">Chats</NavLink>
                 </li>
                 <li>
-                  <Link
-                    href="/about"
-                    className="hover:underline hover:underline-offset-4 hover:text-slate-500 text-xl"
-                  >
-                    About
-                  </Link>
+                  <NavLink href="/about">About</NavLink>
                 </li>
               </ul>
               <div>
