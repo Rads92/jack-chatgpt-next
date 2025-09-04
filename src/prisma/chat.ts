@@ -2,12 +2,15 @@ import { Completion } from "@/lib/types";
 import { prismaClient } from "@/prisma/client";
 import { Message } from "@/prisma/generated/prisma";
 
-export async function getChats(userEmail: string) {
+export async function getChats(userEmail: string, withMessage = false) {
   return await prismaClient.chat.findMany({
     where: {
       user_email: {
         equals: userEmail,
       },
+    },
+    include: {
+      Message: withMessage,
     },
   });
 }
