@@ -43,7 +43,6 @@ export function Chat() {
           </div>
         </div>
       ))}
-      <pre>{JSON.stringify(messages)}</pre>
       <div className="flex border-t-2 border-t-gray-500 pt-3 mt-3">
         <Input
           className="flex-grow text-xl"

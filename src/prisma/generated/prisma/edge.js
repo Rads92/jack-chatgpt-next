@@ -150,7 +150,7 @@ const config = {
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": "../../../../.env",
+    "rootEnvPath": null,
     "schemaEnvPath": "../../../../.env"
   },
   "relativePath": "../../../../prisma",
@@ -160,7 +160,6 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -171,7 +170,7 @@ const config = {
   },
   "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/prisma/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgres\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Chat {\n  id         String    @id @default(uuid())\n  user_email String\n  name       String\n  timestamp  DateTime  @default(now())\n  Message    Message[]\n}\n\nmodel Message {\n  id      String @id @default(uuid())\n  chat    Chat   @relation(fields: [chat_id], references: [id])\n  chat_id String\n  role    String\n  content String\n}\n",
   "inlineSchemaHash": "44d45b4a43a126bab7f0f258a015fb541061e3c1801314d263831be410b75874",
-  "copyEngine": true
+  "copyEngine": false
 }
 config.dirname = '/'
 
