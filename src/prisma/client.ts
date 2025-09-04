@@ -1,4 +1,4 @@
 import { PrismaClient } from "./generated/prisma";
+import { withAccelerate } from "@prisma/extension-accelerate";
 
-// 2
-export const prismaClient = new PrismaClient();
+export const prismaClient = new PrismaClient().$extends(withAccelerate());

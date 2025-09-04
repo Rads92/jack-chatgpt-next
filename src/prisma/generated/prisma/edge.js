@@ -175,7 +175,7 @@ const config = {
   },
   "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider      = \"prisma-client-js\"\n  output        = \"../src/prisma/generated/prisma\"\n  binaryTargets = [\"native\", \"rhel-openssl-3.0.x\"]\n}\n\ndatasource db {\n  provider = \"postgres\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Chat {\n  id         String    @id @default(uuid())\n  user_email String\n  name       String\n  timestamp  DateTime  @default(now())\n  Message    Message[]\n}\n\nmodel Message {\n  id      String @id @default(uuid())\n  chat    Chat   @relation(fields: [chat_id], references: [id])\n  chat_id String\n  role    String\n  content String\n}\n",
   "inlineSchemaHash": "7bd85d80eb99ee629ca784ace38efa4ae2a3ace84bc2ef6376b35978a1f37d9a",
-  "copyEngine": true
+  "copyEngine": false
 }
 config.dirname = '/'
 
