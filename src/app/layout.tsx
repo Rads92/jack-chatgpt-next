@@ -25,8 +25,10 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
+  chatsSlot,
 }: Readonly<{
   children: React.ReactNode;
+  chatsSlot: React.ReactNode;
 }>) {
   const session = await auth();
 
@@ -65,8 +67,11 @@ export default async function RootLayout({
               </div>
             </nav>
           </header>
-          <div className="flex flex-col md:flex-row">
-            <div className="flex-grow">{children}</div>
+          <div className="flex gap-4">
+            <div className="empty:hidden flex-1">{chatsSlot}</div>
+            <div className="flex flex-3 flex-col md:flex-row">
+              <div className="flex-grow">{children}</div>
+            </div>
           </div>
         </body>
       </html>
