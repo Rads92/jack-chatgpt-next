@@ -1,13 +1,22 @@
 "use client";
 
 import { useRef, useState } from "react";
-
+import { useChat } from "@ai-sdk/react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Completion } from "@/lib/types";
-import { getCompletion } from "../server-actions/getCompletion";
-import { redirect } from "next/navigation";
+
 import Transcript from "./Transcript";
+import { updateChat } from "../server-actions/updateChat";
+import { useRouter } from "next/navigation";
+import { UIMessage } from "ai";
+
+function simplifyMessages(messages: UIMessage[]) {
+  return messages.map((message) => ({
+    role: message.role as "user" | "assistant",
+    content: message.parts.find((part) => part.type === "text")?.text || "",
+  }));
+}
 
 export function Chat({
   id,
@@ -16,47 +25,53 @@ export function Chat({
   id?: string;
   initialMessages?: Completion[];
 }) {
-  const [messages, setMessages] = useState<Completion[]>(initialMessages);
-  const [message, setMessage] = useState("");
+  const router = useRouter();
+  const [input, setInput] = useState("");
   const chatId = useRef<string | null>(id || null);
-
-  const onClick = async () => {
-    const completions = await getCompletion(chatId.current, [
-      ...messages,
-      {
-        role: "user",
-        content: message,
-      },
-    ]);
-
-    if (!chatId.current) {
-      redirect(`/chats/${completions.id}`);
-    }
-    chatId.current = completions.id;
-    setMessage("");
-    setMessages(completions.messages);
-  };
+  const { messages, sendMessage } = useChat({
+    messages: initialMessages.map((msg) => ({
+      ...msg,
+      parts: [
+        {
+          type: "text",
+          text: msg.content,
+        },
+      ],
+    })) as UIMessage[],
+    onFinish: async ({ messages }) => {
+      const simplifiedMessages = simplifyMessages(messages);
+      const newChatId = await updateChat(chatId.current, simplifiedMessages);
+      if (chatId.current === null) {
+        router.push(`/chats/${newChatId}`);
+        router.refresh();
+      } else {
+        chatId.current = newChatId;
+      }
+    },
+  });
 
   return (
-    <div className="flex flex-col">
-      <Transcript messages={messages} truncate={false} />
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        sendMessage({ text: input });
+        setInput("");
+      }}
+      className="flex flex-col"
+    >
+      <Transcript messages={simplifyMessages(messages)} truncate={false} />
       <div className="flex border-t-2 border-t-gray-500 pt-3 mt-3">
         <Input
           className="flex-grow text-xl"
           placeholder="Question"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyUp={(e) => {
-            if (e.key === "Enter") {
-              onClick();
-            }
-          }}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
         />
       </div>
       <div className="py-6" />
-      <Button onClick={onClick} className="ml-3 text-xl">
+      <Button type="submit" className="ml-3 text-xl">
         Send
       </Button>
-    </div>
+    </form>
   );
 }
